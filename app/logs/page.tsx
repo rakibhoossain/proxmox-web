@@ -35,7 +35,7 @@ export default async function LogsPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Recent Logs</CardTitle>
-                        <CardDescription>Last {logs.length} restart operations</CardDescription>
+                        <CardDescription>Last {logs?.length || 0} restart operations</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <LogsTable logs={logs} />

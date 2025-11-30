@@ -37,7 +37,7 @@ export default async function WhitelistPage() {
                     <CardHeader>
                         <CardTitle>Whitelisted Resources</CardTitle>
                         <CardDescription>
-                            {whitelist.length} resource{whitelist.length !== 1 ? 's' : ''} configured for auto-restart
+                            {whitelist?.length || 0} resource{whitelist?.length > 1 ? 's' : ''} configured for auto-restart
                         </CardDescription>
                     </CardHeader>
                     <CardContent>

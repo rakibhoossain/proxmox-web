@@ -79,7 +79,7 @@ export function WhitelistManager({ initialWhitelist, availableResources }: Props
         }
     }
 
-    const whitelistedVmids = new Set(initialWhitelist.map((w) => w.vmid))
+    const whitelistedVmids = new Set(initialWhitelist?.map((w) => w.vmid))
     const availableToAdd = availableResources.filter((r) => !whitelistedVmids.has(r.vmid))
 
     return (
@@ -130,13 +130,13 @@ export function WhitelistManager({ initialWhitelist, availableResources }: Props
                 </DialogContent>
             </Dialog>
 
-            {initialWhitelist.length === 0 ? (
+            {!initialWhitelist?.length ? (
                 <p className="text-center text-muted-foreground py-8">
                     No resources in whitelist. Add resources to enable auto-restart.
                 </p>
             ) : (
                 <div className="space-y-3">
-                    {initialWhitelist.map((item) => (
+                    {initialWhitelist?.map((item) => (
                         <div
                             key={item.id}
                             className="flex items-center justify-between p-4 border rounded-lg"

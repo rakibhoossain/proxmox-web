@@ -150,11 +150,11 @@ export default async function ResourcePage({
                     <CardHeader>
                         <CardTitle>Recent Logs</CardTitle>
                         <CardDescription>
-                            Last {logs.length} operations for this resource
+                            Last {logs?.length || 0} operations for this resource
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {logs.length === 0 ? (
+                        {!logs?.length ? (
                             <p className="text-center text-muted-foreground py-8">
                                 No logs found for this resource
                             </p>

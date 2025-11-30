@@ -39,7 +39,7 @@ export function LogsTable({ logs }: Props) {
 
     return (
         <div className="rounded-md border">
-            {logs.length === 0 ? (
+            {!logs?.length ? (
                 <p className="text-center text-muted-foreground py-8">No logs found</p>
             ) : (
                 <Table>
