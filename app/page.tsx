@@ -1,11 +1,11 @@
 import Link from 'next/link'
-import { getNodes } from './actions/nodes'
+import { getResources } from './actions/resources'
 import { getWhitelist } from './actions/whitelist'
 import { getSystemStatus } from './actions/logs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Activity, Server, Clock, BarChart } from 'lucide-react'
+import { Activity, Server, Clock, BarChart, HardDrive } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,13 +21,13 @@ function formatBytes(bytes: number): string {
 }
 
 export default async function Home() {
-  const [nodes, whitelist, status] = await Promise.all([
-    getNodes(),
+  const [resources, whitelist, status] = await Promise.all([
+    getResources(),
     getWhitelist(),
     getSystemStatus(),
   ])
 
-  const whitelistedNames = new Set(whitelist.map((w) => w.node_name))
+  const whitelistedIds = new Set(whitelist.map((w) => w.vmid))
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
@@ -38,7 +38,7 @@ export default async function Home() {
             Proxmox Auto-Restart System
           </h1>
           <p className="text-slate-600 dark:text-slate-400">
-            Monitor and manage Proxmox node restarts
+            Monitor and manage Proxmox VMs and Containers
           </p>
         </div>
 
@@ -47,13 +47,13 @@ export default async function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-sm font-medium">Total Nodes</CardTitle>
+                <CardTitle className="text-sm font-medium">Total Resources</CardTitle>
                 <Server className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{status.total_nodes}</div>
+                <div className="text-2xl font-bold">{status.total_resources}</div>
                 <p className="text-xs text-muted-foreground">
-                  {status.online_nodes} online
+                  {status.running_resources} running
                 </p>
               </CardContent>
             </Card>
@@ -64,7 +64,7 @@ export default async function Home() {
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{status.whitelisted_nodes}</div>
+                <div className="text-2xl font-bold">{status.whitelisted_count}</div>
                 <p className="text-xs text-muted-foreground">Auto-restart enabled</p>
               </CardContent>
             </Card>
@@ -102,7 +102,7 @@ export default async function Home() {
         {/* Navigation */}
         <div className="flex gap-4 mb-6">
           <Link href="/">
-            <Button variant="default">Nodes</Button>
+            <Button variant="default">Resources</Button>
           </Link>
           <Link href="/whitelist">
             <Button variant="outline">Whitelist</Button>
@@ -112,57 +112,69 @@ export default async function Home() {
           </Link>
         </div>
 
-        {/* Nodes List */}
+        {/* Resources List */}
         <Card>
           <CardHeader>
-            <CardTitle>Proxmox Nodes</CardTitle>
-            <CardDescription>View and manage all Proxmox nodes</CardDescription>
+            <CardTitle>VMs & Containers</CardTitle>
+            <CardDescription>View and manage all Proxmox resources</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {nodes.length === 0 ? (
+              {resources.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">
-                  No nodes found. Waiting for sync...
+                  No resources found. Check connection to Proxmox.
                 </p>
               ) : (
-                nodes.map((node) => (
+                resources.map((resource) => (
                   <div
-                    key={node.id}
+                    key={`${resource.node}-${resource.vmid}`}
                     className="flex items-center justify-between p-4 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <h3 className="font-semibold text-lg">{node.node_name}</h3>
-                        <Badge
-                          variant={node.status === 'online' ? 'default' : 'destructive'}
-                        >
-                          {node.status}
+                        <Badge variant="outline" className="font-mono">
+                          {resource.vmid}
                         </Badge>
-                        {whitelistedNames.has(node.node_name) && (
-                          <Badge variant="secondary">Auto-restart</Badge>
+                        <h3 className="font-semibold text-lg">{resource.name}</h3>
+                        <Badge variant="secondary" className="uppercase text-xs">
+                          {resource.type}
+                        </Badge>
+                        <Badge
+                          variant={resource.status === 'running' ? 'default' : 'secondary'}
+                          className={resource.status !== 'running' ? 'bg-slate-500 hover:bg-slate-600' : ''}
+                        >
+                          {resource.status}
+                        </Badge>
+                        {whitelistedIds.has(resource.vmid) && (
+                          <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                            Auto-restart
+                          </Badge>
                         )}
                       </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
+                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm text-muted-foreground">
+                        <div>
+                          <span className="font-medium">Node:</span> {resource.node}
+                        </div>
                         <div>
                           <span className="font-medium">Uptime:</span>{' '}
-                          {formatUptime(node.uptime)}
+                          {formatUptime(resource.uptime)}
                         </div>
                         <div>
                           <span className="font-medium">CPU:</span>{' '}
-                          {(node.cpu_usage * 100).toFixed(1)}%
+                          {(resource.cpu_usage * 100).toFixed(1)}%
                         </div>
                         <div>
                           <span className="font-medium">Memory:</span>{' '}
-                          {formatBytes(node.memory_used)} / {formatBytes(node.memory_total)}
+                          {formatBytes(resource.memory_used)} / {formatBytes(resource.memory_total)}
                         </div>
                         <div>
-                          <span className="font-medium">Last Sync:</span>{' '}
-                          {new Date(node.last_synced_at).toLocaleTimeString()}
+                          <span className="font-medium">Disk:</span>{' '}
+                          {formatBytes(resource.disk_used)} / {formatBytes(resource.disk_total)}
                         </div>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Link href={`/nodes/${node.node_name}`}>
+                    <div className="flex gap-2 ml-4">
+                      <Link href={`/resources/${resource.vmid}?node=${resource.node}`}>
                         <Button size="sm">Manage</Button>
                       </Link>
                     </div>

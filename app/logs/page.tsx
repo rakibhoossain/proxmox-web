@@ -22,7 +22,7 @@ export default async function LogsPage() {
 
                 <div className="flex gap-4 mb-6">
                     <Link href="/">
-                        <Button variant="outline">Nodes</Button>
+                        <Button variant="outline">Resources</Button>
                     </Link>
                     <Link href="/whitelist">
                         <Button variant="outline">Whitelist</Button>

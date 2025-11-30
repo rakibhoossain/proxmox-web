@@ -3,57 +3,59 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Power, PowerOff, RotateCw } from 'lucide-react'
-import { restartNode, stopNode, startNode } from '@/app/actions/nodes'
+import { restartResource, stopResource, startResource } from '@/app/actions/resources'
 import { useRouter } from 'next/navigation'
 
 interface Props {
-    nodeName: string
+    vmid: number
+    node: string
+    currentStatus: string
 }
 
-export function NodeControls({ nodeName }: Props) {
+export function ResourceControls({ vmid, node, currentStatus }: Props) {
     const router = useRouter()
     const [loading, setLoading] = useState<string | null>(null)
 
     const handleRestart = async () => {
-        if (!confirm(`Are you sure you want to restart ${nodeName}?`)) return
+        if (!confirm(`Are you sure you want to restart resource ${vmid}?`)) return
         setLoading('restart')
         try {
-            await restartNode(nodeName, 'ui')
-            alert(`Restart triggered for ${nodeName}`)
+            await restartResource(vmid, node, 'ui')
+            alert(`Restart triggered for ${vmid}`)
             router.refresh()
         } catch (error) {
             console.error(error)
-            alert('Failed to restart node')
+            alert('Failed to restart resource')
         } finally {
             setLoading(null)
         }
     }
 
     const handleStop = async () => {
-        if (!confirm(`Are you sure you want to stop ${nodeName}?`)) return
+        if (!confirm(`Are you sure you want to stop resource ${vmid}?`)) return
         setLoading('stop')
         try {
-            await stopNode(nodeName, 'ui')
-            alert(`Stop triggered for ${nodeName}`)
+            await stopResource(vmid, node, 'ui')
+            alert(`Stop triggered for ${vmid}`)
             router.refresh()
         } catch (error) {
             console.error(error)
-            alert('Failed to stop node')
+            alert('Failed to stop resource')
         } finally {
             setLoading(null)
         }
     }
 
     const handleStart = async () => {
-        if (!confirm(`Are you sure you want to start ${nodeName}?`)) return
+        if (!confirm(`Are you sure you want to start resource ${vmid}?`)) return
         setLoading('start')
         try {
-            await startNode(nodeName, 'ui')
-            alert(`Start triggered for ${nodeName}`)
+            await startResource(vmid, node, 'ui')
+            alert(`Start triggered for ${vmid}`)
             router.refresh()
         } catch (error) {
             console.error(error)
-            alert('Failed to start node')
+            alert('Failed to start resource')
         } finally {
             setLoading(null)
         }
@@ -63,7 +65,7 @@ export function NodeControls({ nodeName }: Props) {
         <div className="flex gap-3">
             <Button
                 onClick={handleRestart}
-                disabled={loading !== null}
+                disabled={loading !== null || currentStatus === 'stopped'}
                 className="flex-1"
             >
                 <RotateCw className="mr-2 h-4 w-4" />
@@ -71,7 +73,7 @@ export function NodeControls({ nodeName }: Props) {
             </Button>
             <Button
                 onClick={handleStop}
-                disabled={loading !== null}
+                disabled={loading !== null || currentStatus === 'stopped'}
                 variant="destructive"
                 className="flex-1"
             >
@@ -80,7 +82,7 @@ export function NodeControls({ nodeName }: Props) {
             </Button>
             <Button
                 onClick={handleStart}
-                disabled={loading !== null}
+                disabled={loading !== null || currentStatus === 'running'}
                 variant="secondary"
                 className="flex-1"
             >

@@ -45,6 +45,8 @@ export function LogsTable({ logs }: Props) {
                 <Table>
                     <TableHeader>
                         <TableRow>
+                            <TableHead>VMID</TableHead>
+                            <TableHead>Resource</TableHead>
                             <TableHead>Node</TableHead>
                             <TableHead>Action</TableHead>
                             <TableHead>Trigger</TableHead>
@@ -57,7 +59,9 @@ export function LogsTable({ logs }: Props) {
                     <TableBody>
                         {logs.map((log) => (
                             <TableRow key={log.id}>
-                                <TableCell className="font-medium">{log.node_name}</TableCell>
+                                <TableCell className="font-mono">{log.vmid}</TableCell>
+                                <TableCell className="font-medium">{log.resource_name}</TableCell>
+                                <TableCell>{log.node}</TableCell>
                                 <TableCell className="capitalize">{log.action}</TableCell>
                                 <TableCell>{getTriggerBadge(log.trigger_type)}</TableCell>
                                 <TableCell>{getStatusBadge(log.status)}</TableCell>
