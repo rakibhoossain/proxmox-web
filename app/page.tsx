@@ -28,7 +28,7 @@ export default async function Home() {
     getSystemStatus(),
   ])
 
-  const whitelistedIds = new Set(whitelist.map((w) => w.vmid))
+  const whitelistedIds = new Set(whitelist?.map((w) => w.vmid))
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">

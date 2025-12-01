@@ -52,7 +52,7 @@ export function LogsTable({ logs }: { logs: Log[] }) {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {logs.map((log) => (
+                    {logs?.map((log) => (
                         <TableRow key={log.id}>
                             <TableCell className="whitespace-nowrap">
                                 {new Date(log.started_at).toLocaleString()}
