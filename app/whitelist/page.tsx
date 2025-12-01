@@ -8,7 +8,8 @@ import { AddToWhitelistDialog } from './add-dialog'
 export const dynamic = 'force-dynamic'
 
 export default async function WhitelistPage() {
-    const [whitelist, resources] = await Promise.all([getWhitelist(), getResources()])
+    // Fetch all resources for the dropdown (limit 1000)
+    const [whitelist, resources] = await Promise.all([getWhitelist(), getResources(1, 1000)])
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
@@ -36,7 +37,7 @@ export default async function WhitelistPage() {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <WhitelistManager initialWhitelist={whitelist} availableResources={resources} />
+                        <WhitelistManager initialWhitelist={whitelist} availableResources={resources.data} />
                     </CardContent>
                 </Card>
             </div>

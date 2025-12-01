@@ -11,7 +11,7 @@ export function Navigation() {
     const { logout } = useAuth()
 
     return (
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center my-2">
             <Link href="/">
                 <Button variant={pathname === '/' ? 'default' : 'outline'}>
                     Resources

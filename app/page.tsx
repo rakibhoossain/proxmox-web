@@ -5,7 +5,7 @@ import { getSystemStatus } from './actions/logs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Activity, Server, Clock, BarChart, HardDrive } from 'lucide-react'
+import { Activity, Server, Clock, BarChart, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Navigation } from '@/components/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -21,12 +21,23 @@ function formatBytes(bytes: number): string {
   return `${(bytes / 1024 / 1024 / 1024).toFixed(2)} GB`
 }
 
-export default async function Home() {
-  const [resources, whitelist, status] = await Promise.all([
-    getResources(),
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { page?: string }
+}) {
+  const page = Number(searchParams.page) || 1
+  const limit = 10
+
+  const [paginatedResources, whitelist, status] = await Promise.all([
+    getResources(page, limit),
     getWhitelist(),
     getSystemStatus(),
   ])
+
+  const resources = paginatedResources.data
+  const total = paginatedResources.total
+  const totalPages = Math.ceil(total / limit)
 
   const whitelistedIds = new Set(whitelist?.map((w) => w.vmid))
 
@@ -106,8 +117,15 @@ export default async function Home() {
         {/* Resources List */}
         <Card>
           <CardHeader>
-            <CardTitle>VMs & Containers</CardTitle>
-            <CardDescription>View and manage all Proxmox resources</CardDescription>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle>VMs & Containers</CardTitle>
+                <CardDescription>View and manage all Proxmox resources</CardDescription>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Showing {resources.length} of {total} resources
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -173,6 +191,27 @@ export default async function Home() {
                 ))
               )}
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-6">
+                <Link href={`/?page=${page - 1}`} className={page <= 1 ? 'pointer-events-none opacity-50' : ''}>
+                  <Button variant="outline" size="sm" disabled={page <= 1}>
+                    <ChevronLeft className="h-4 w-4 mr-2" />
+                    Previous
+                  </Button>
+                </Link>
+                <span className="text-sm text-muted-foreground">
+                  Page {page} of {totalPages}
+                </span>
+                <Link href={`/?page=${page + 1}`} className={page >= totalPages ? 'pointer-events-none opacity-50' : ''}>
+                  <Button variant="outline" size="sm" disabled={page >= totalPages}>
+                    Next
+                    <ChevronRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

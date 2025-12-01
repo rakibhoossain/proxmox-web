@@ -40,7 +40,7 @@ export function WhitelistManager({ initialWhitelist, availableResources }: Props
     const handleAdd = async () => {
         if (!selectedResourceId) return
 
-        const resource = availableResources.find(r => r.vmid.toString() === selectedResourceId)
+        const resource = availableResources?.find(r => r.vmid.toString() === selectedResourceId)
         if (!resource) return
 
         setIsSubmitting(true)
@@ -80,7 +80,7 @@ export function WhitelistManager({ initialWhitelist, availableResources }: Props
     }
 
     const whitelistedVmids = new Set(initialWhitelist?.map((w) => w.vmid))
-    const availableToAdd = availableResources.filter((r) => !whitelistedVmids.has(r.vmid))
+    const availableToAdd = availableResources?.filter((r) => !whitelistedVmids.has(r.vmid))
 
     return (
         <div className="space-y-4">

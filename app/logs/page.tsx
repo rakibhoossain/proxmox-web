@@ -23,7 +23,7 @@ export default async function LogsPage() {
 
                 <Navigation />
 
-                <Card>
+                <Card className='my-2'>
                     <CardHeader>
                         <CardTitle>Recent Logs</CardTitle>
                         <CardDescription>Last {logs?.length || 0} restart operations</CardDescription>

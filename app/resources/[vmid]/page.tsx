@@ -156,7 +156,7 @@ export default async function ResourcePage({
                 <InstalledServices services={services} vmid={vmidInt} node={nodeName} />
 
                 {/* Recent Logs */}
-                <Card>
+                <Card className='my-2'>
                     <CardHeader>
                         <CardTitle>Recent Logs</CardTitle>
                         <CardDescription>

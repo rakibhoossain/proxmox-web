@@ -23,11 +23,17 @@ export interface Resource {
     updated_at: string
 }
 
-export async function getResources(): Promise<Resource[]> {
+export interface PaginatedResources {
+    data: Resource[]
+    total: number
+}
+
+export async function getResources(page: number = 1, limit: number = 10): Promise<PaginatedResources> {
     const authHeaders = getAuthHeaders()
+    const offset = (page - 1) * limit
 
     try {
-        const res = await fetch(`${API_URL}/api/resources`, {
+        const res = await fetch(`${API_URL}/api/resources?limit=${limit}&offset=${offset}`, {
             headers: authHeaders,
             cache: 'no-store',
         })
@@ -39,7 +45,7 @@ export async function getResources(): Promise<Resource[]> {
         return res.json()
     } catch (error) {
         console.error('Error fetching resources:', error)
-        return []
+        return { data: [], total: 0 }
     }
 }
 
