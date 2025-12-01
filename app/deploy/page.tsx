@@ -153,7 +153,7 @@ export default function DeployPage() {
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value=" grow">
+                                    <SelectItem value="grow">
                                         <div className="flex items-center gap-2">
                                             <span>Grow Blockchain</span>
                                             <Badge variant="secondary" className="text-xs">v2.6.1-b</Badge>
