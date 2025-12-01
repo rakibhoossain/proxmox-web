@@ -1,10 +1,9 @@
-import { getWhitelist } from '../actions/whitelist'
-import { getResources } from '../actions/resources'
+import { getWhitelist } from '@/app/actions/whitelist'
+import { getResources } from '@/app/actions/resources'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { Navigation } from '@/components/navigation'
 import { WhitelistManager } from './whitelist-manager'
+import { AddToWhitelistDialog } from './add-dialog'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,28 +16,24 @@ export default async function WhitelistPage() {
                 <div className="mb-6">
                     <h1 className="text-3xl font-bold mb-2">Auto-Restart Whitelist</h1>
                     <p className="text-muted-foreground">
-                        Manage which VMs and Containers will be automatically restarted every 6 hours
+                        Manage which VMs and Containers will be automatically restarted.
+                        Default interval is 6 hours, but can be configured per resource.
                     </p>
                 </div>
 
-                <div className="flex gap-4 mb-6">
-                    <Link href="/">
-                        <Button variant="outline">Resources</Button>
-                    </Link>
-                    <Link href="/whitelist">
-                        <Button variant="default">Whitelist</Button>
-                    </Link>
-                    <Link href="/logs">
-                        <Button variant="outline">Logs</Button>
-                    </Link>
-                </div>
+                <Navigation />
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Whitelisted Resources</CardTitle>
-                        <CardDescription>
-                            {whitelist?.length || 0} resource{whitelist?.length > 1 ? 's' : ''} configured for auto-restart
-                        </CardDescription>
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <CardTitle>Whitelisted Resources</CardTitle>
+                                <CardDescription>
+                                    {whitelist?.length || 0} resource{whitelist?.length !== 1 ? 's' : ''} configured for auto-restart
+                                </CardDescription>
+                            </div>
+                            <AddToWhitelistDialog />
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <WhitelistManager initialWhitelist={whitelist} availableResources={resources} />

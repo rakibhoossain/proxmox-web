@@ -1,11 +1,14 @@
 import { notFound } from 'next/navigation'
 import { getResourceByVMID } from '@/app/actions/resources'
 import { getLogs } from '@/app/actions/logs'
+import { getContainerServices } from '@/app/actions/services'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { ResourceControls } from './resource-controls'
+import { ResourceActions } from './resource-actions'
+import { InstalledServices } from './installed-services'
 import { LogsTable } from '@/app/logs/logs-table'
 
 export const dynamic = 'force-dynamic'
@@ -43,9 +46,10 @@ export default async function ResourcePage({
     }
 
     const vmidInt = parseInt(vmid)
-    const [resource, logs] = await Promise.all([
+    const [resource, logs, services] = await Promise.all([
         getResourceByVMID(vmidInt, nodeName),
         getLogs({ vmid: vmidInt, limit: 20 }),
+        getContainerServices(vmidInt, nodeName),
     ])
 
     if (!resource) {
@@ -73,6 +77,9 @@ export default async function ResourcePage({
                         >
                             {resource.status}
                         </Badge>
+                    </div>
+                    <div className="flex items-center gap-2 mt-2">
+                        <ResourceActions vmid={vmidInt} node={nodeName} resourceName={resource.name} />
                     </div>
                     <p className="text-muted-foreground">
                         Running on node <span className="font-semibold text-foreground">{resource.node}</span>
@@ -144,6 +151,9 @@ export default async function ResourcePage({
                         />
                     </CardContent>
                 </Card>
+
+                {/* Installed Services */}
+                <InstalledServices services={services} vmid={vmidInt} node={nodeName} />
 
                 {/* Recent Logs */}
                 <Card>

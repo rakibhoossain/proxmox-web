@@ -36,7 +36,7 @@ export async function getWhitelist(): Promise<WhitelistEntry[]> {
     }
 }
 
-export async function addToWhitelist(vmid: number, resourceName: string, node: string, notes: string = '') {
+export async function addToWhitelist(vmid: number, resourceName: string, node: string, notes: string = '', restartInterval: number = 6) {
     const authHeaders = getAuthHeaders()
 
     try {
@@ -52,6 +52,7 @@ export async function addToWhitelist(vmid: number, resourceName: string, node: s
                 node,
                 created_by: 'dashboard',
                 notes,
+                restart_interval_hours: restartInterval,
             }),
         })
 
@@ -67,7 +68,7 @@ export async function addToWhitelist(vmid: number, resourceName: string, node: s
     }
 }
 
-export async function updateWhitelist(id: number, enabled: boolean, notes: string) {
+export async function updateWhitelist(id: number, enabled: boolean, notes: string, restartInterval: number = 6) {
     const authHeaders = getAuthHeaders()
 
     try {
@@ -77,7 +78,7 @@ export async function updateWhitelist(id: number, enabled: boolean, notes: strin
                 ...authHeaders,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ enabled, notes }),
+            body: JSON.stringify({ enabled, notes, restart_interval_hours: restartInterval }),
         })
 
         if (!res.ok) {

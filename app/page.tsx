@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Activity, Server, Clock, BarChart, HardDrive } from 'lucide-react'
+import { Navigation } from '@/components/navigation'
 
 export const dynamic = 'force-dynamic'
 
@@ -100,17 +101,7 @@ export default async function Home() {
         )}
 
         {/* Navigation */}
-        <div className="flex gap-4 mb-6">
-          <Link href="/">
-            <Button variant="default">Resources</Button>
-          </Link>
-          <Link href="/whitelist">
-            <Button variant="outline">Whitelist</Button>
-          </Link>
-          <Link href="/logs">
-            <Button variant="outline">Logs</Button>
-          </Link>
-        </div>
+        <Navigation />
 
         {/* Resources List */}
         <Card>

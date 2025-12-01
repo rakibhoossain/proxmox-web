@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { LogsTable } from './logs-table'
+import { Navigation } from '@/components/navigation'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,17 +21,7 @@ export default async function LogsPage() {
                     </p>
                 </div>
 
-                <div className="flex gap-4 mb-6">
-                    <Link href="/">
-                        <Button variant="outline">Resources</Button>
-                    </Link>
-                    <Link href="/whitelist">
-                        <Button variant="outline">Whitelist</Button>
-                    </Link>
-                    <Link href="/logs">
-                        <Button variant="default">Logs</Button>
-                    </Link>
-                </div>
+                <Navigation />
 
                 <Card>
                     <CardHeader>
