@@ -24,9 +24,10 @@ function formatBytes(bytes: number): string {
 export default async function Home({
   searchParams,
 }: {
-  searchParams: { page?: string }
+  searchParams: Promise<{ page?: string }>
 }) {
-  const page = Number(searchParams.page) || 1
+  const params = await searchParams
+  const page = Number(params.page) || 1
   const limit = 10
 
   const [paginatedResources, whitelist, status] = await Promise.all([
