@@ -10,8 +10,12 @@ import { ResourceControls } from './resource-controls'
 import { ResourceActions } from './resource-actions'
 import { InstalledServices } from './installed-services'
 import { LogsTable } from '@/app/logs/logs-table'
+import { TerminalComponent } from '@/components/terminal'
 
 export const dynamic = 'force-dynamic'
+
+const username = process.env.AUTH_USERNAME || 'admin'
+const password = process.env.AUTH_PASSWORD || 'proxmox2024'
 
 function formatUptime(seconds: number): string {
     const days = Math.floor(seconds / 86400)
@@ -154,6 +158,25 @@ export default async function ResourcePage({
 
                 {/* Installed Services */}
                 <InstalledServices services={services} vmid={vmidInt} node={nodeName} />
+
+                {/* Terminal Console */}
+                <Card className='my-2'>
+                    <CardHeader>
+                        <CardTitle>Terminal Console</CardTitle>
+                        <CardDescription>
+                            Interactive terminal access to this {resource.type === 'lxc' ? 'container' : 'VM'}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <TerminalComponent
+                            vmid={vmidInt}
+                            node={nodeName}
+                            type={resource.type}
+                            username={username}
+                            password={password}
+                        />
+                    </CardContent>
+                </Card>
 
                 {/* Recent Logs */}
                 <Card className='my-2'>
